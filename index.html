@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Une petite question...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #ffe4e6;
+            overflow: hidden; /* Prevent scrolling during animations */
+        }
+        .slide-enter {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+        .slide-exit {
+            animation: slideOut 0.5s ease-in forwards;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes slideOut {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(-20px) scale(0.95); }
+        }
+        .btn-shadow {
+            box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-shadow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.15);
+        }
+        .heart-beat {
+            animation: beat 1s infinite alternate;
+        }
+        @keyframes beat {
+            to { transform: scale(1.1); }
+        }
+        /* Absolute positioning context for the running button */
+        #card-container {
+            position: relative;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex items-center justify-center relative">
+
+    <!-- Background Elements -->
+    <div class="absolute top-10 left-10 text-pink-200 text-6xl opacity-50">♥</div>
+    <div class="absolute bottom-20 right-20 text-pink-300 text-8xl opacity-40">♥</div>
+    <div class="absolute top-1/2 left-1/4 text-red-100 text-4xl opacity-60">♥</div>
+
+    <!-- Main Card Container -->
+    <div id="card-container" class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md mx-4 text-center min-h-[400px] flex flex-col items-center justify-center relative z-10 transition-all duration-500">
+        
+        <!-- STEP 1: Intro -->
+        <div id="step-1" class="step w-full">
+            <div class="text-6xl mb-4">👋</div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">Coucou toi !</h1>
+            <p class="text-gray-600 mb-8 text-lg">J'ai un petit truc important à te demander...</p>
+            <button onclick="nextStep(2)" class="btn-shadow bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-full text-xl w-full">
+                C'est quoi ?
+            </button>
+        </div>
+
+        <!-- STEP 2: First Check -->
+        <div id="step-2" class="step w-full hidden">
+            <div class="text-6xl mb-4">🤔</div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">D'abord, une vérification...</h1>
+            <p class="text-gray-600 mb-8 text-lg">Est-ce qu'on s'amuse bien quand on est ensemble ?</p>
+            <div class="space-y-3">
+                <button onclick="nextStep(3)" class="btn-shadow bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl w-full">
+                    Oui, carrément !
+                </button>
+                <button onclick="nextStep(3)" class="btn-shadow bg-blue-400 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl w-full">
+                    Évidemment 😊
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 3: Second Check -->
+        <div id="step-3" class="step w-full hidden">
+            <div class="text-6xl mb-4">✨</div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">Et aussi...</h1>
+            <p class="text-gray-600 mb-8 text-lg">Tu trouves que je suis quelqu'un de bien pour toi ?</p>
+            <button onclick="nextStep(4)" class="btn-shadow bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-full text-xl w-full">
+                Oui, totalement
+            </button>
+        </div>
+
+        <!-- STEP 4: The Big Question -->
+        <div id="step-4" class="step w-full hidden relative h-full">
+            <div class="text-6xl mb-2 heart-beat text-red-500">❤️</div>
+            <h1 class="text-3xl font-black text-gray-800 mb-6 mt-2">Alors...</h1>
+            <p class="text-gray-600 mb-8 text-xl font-semibold">Veux-tu être ma copine ?</p>
+            
+            <div class="flex flex-col gap-4 items-center justify-center w-full h-40 relative">
+                <!-- YES Button -->
+                <button onclick="acceptLove()" class="btn-shadow bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-10 rounded-full text-xl z-20">
+                    OUI ! 😍
+                </button>
+                
+                <!-- NO Button (The Runner) -->
+                <button id="no-btn" class="bg-gray-300 text-gray-500 font-bold py-2 px-6 rounded-full text-sm absolute bottom-0 transition-all duration-100 ease-out z-10">
+                    Non...
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 5: Success -->
+        <div id="step-5" class="step w-full hidden">
+            <div class="text-8xl mb-4">💑</div>
+            <h1 class="text-3xl font-black text-pink-600 mb-4">Yeeeees !</h1>
+            <p class="text-gray-700 mb-6 text-lg">Tu viens de faire de moi le gars le plus heureux. On se voit bientôt ?</p>
+            <div class="p-4 bg-pink-50 rounded-xl border-2 border-pink-100">
+                <p class="text-pink-400 font-bold">Je t'aime ❤️</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Navigation Logic ---
+        function nextStep(stepNumber) {
+            // Find currently active step
+            const currentStep = document.querySelector('.step:not(.hidden)');
+            
+            // Animate out
+            currentStep.classList.add('slide-exit');
+            
+            setTimeout(() => {
+                currentStep.classList.add('hidden');
+                currentStep.classList.remove('slide-exit');
+                
+                // Show next step
+                const nextStepDiv = document.getElementById(`step-${stepNumber}`);
+                nextStepDiv.classList.remove('hidden');
+                nextStepDiv.classList.add('slide-enter');
+                
+                // Clean up animation class
+                setTimeout(() => {
+                    nextStepDiv.classList.remove('slide-enter');
+                }, 500);
+            }, 400); // Wait for exit animation
+        }
+
+        // --- The "Running Button" Logic ---
+        const noBtn = document.getElementById('no-btn');
+        const container = document.getElementById('step-4'); // Constrain movement to the card area
+        
+        // Function to move the button randomly
+        function moveButton() {
+            // Get container dimensions (excluding padding roughly)
+            const maxX = 200; // Limits from center
+            const maxY = 100; // Limits
+            
+            // Random position
+            const randomX = Math.floor(Math.random() * maxX) - (maxX/2);
+            const randomY = Math.floor(Math.random() * maxY) - (maxY/2);
+            
+            // Apply transform
+            noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        }
+
+        // Trigger on hover (desktop)
+        noBtn.addEventListener('mouseover', moveButton);
+        
+        // Trigger on touch/click (mobile - makes it impossible to tap)
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent click
+            moveButton();
+        });
+        noBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+
+        // --- Success & Confetti Logic ---
+        function acceptLove() {
+            nextStep(5);
+            launchConfetti();
+            
+            // Keep launching confetti periodically
+            setInterval(() => {
+                launchSideConfetti();
+            }, 2000);
+        }
+
+        function launchConfetti() {
+            const duration = 3000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            const random = (min, max) => Math.random() * (max - min) + min;
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                
+                // Origin from center
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: 0.5, y: 0.6 } }));
+            }, 250);
+        }
+
+        function launchSideConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+    </script>
+</body>
+</html>
